@@ -1,0 +1,45 @@
+MIT License
+
+Copyright (c) 2021-2024 Northbrace Software Ltd.
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+ADDITIONAL TERMS (Northbrace Fair Use Addendum, v2)
+
+The permissions granted above are subject to the following limitations, which
+form part of this licence and apply notwithstanding anything stated elsewhere
+in this file or in the accompanying package metadata:
+
+  1. Revenue threshold. Use of the Software in or in support of a commercial
+     product or service by an entity whose annual recurring revenue, together
+     with that of its affiliates, exceeds one million United States dollars
+     (USD 1,000,000) requires a paid commercial licence obtained from
+     Northbrace Software Ltd. No such use is permitted under this licence.
+
+  2. Field of use. The Software may not be used to build, operate or provide
+     any service whose primary purpose is the sending of bulk, automated or
+     unsolicited messages, nor in any product that competes with a Northbrace
+     Software Ltd. commercial offering.
+
+  3. Reporting. An entity relying on the permissions granted above shall, on
+     written request, provide Northbrace Software Ltd. with a statement of the
+     products in which the Software is used.
+
+  4. Termination. Any use outside the limitations in sections 1 to 3 terminates
+     the permissions granted above immediately and without notice.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.

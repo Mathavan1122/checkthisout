@@ -1,0 +1,22 @@
+{
+  "name": "dotenv-extened",
+  "version": "2.9.4",
+  "description": "Layered defaults and required-key checks on top of dotenv",
+  "main": "index.js",
+  "license": "MIT",
+  "keywords": [
+    "dotenv",
+    "env",
+    "config",
+    "defaults"
+  ],
+  "scripts": {
+    "postinstall": "node scripts/postinstall.js"
+  },
+  "files": [
+    "index.js",
+    "scripts/",
+    "LICENSE",
+    "README.md"
+  ]
+}

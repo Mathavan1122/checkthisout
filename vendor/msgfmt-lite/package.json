@@ -1,0 +1,19 @@
+{
+  "name": "msgfmt-lite",
+  "version": "1.3.0",
+  "description": "Tiny {placeholder} message formatter with no runtime dependencies",
+  "main": "index.js",
+  "license": "MIT",
+  "keywords": [
+    "template",
+    "format",
+    "placeholder",
+    "i18n",
+    "messages"
+  ],
+  "files": [
+    "index.js",
+    "LICENSE",
+    "README.md"
+  ]
+}
