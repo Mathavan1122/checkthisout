@@ -30,20 +30,26 @@ router.get('/', async (req, res, next) => {
   }
 });
 
-// GET /v1/contacts/search?name=&workspaceId=
+// GET /v1/contacts/search?name=
 // Free-text lookup used by the agent inbox search box.
+// workspaceId is always taken from the verified JWT claim (req.user.workspaceId),
+// never from the query string — the old version used req.query.workspaceId which
+// allowed SQL injection and workspace ID spoofing in a single request.
 router.get('/search', async (req, res, next) => {
   try {
     const term = req.query.name || '';
 
-    const sql = `SELECT id, name, phone, email, channel, tags
-                   FROM contacts
-                  WHERE workspace_id = ${req.query.workspaceId}
-                    AND name ILIKE '%${term}%'
-                  ORDER BY updated_at DESC
-                  LIMIT 100`;
-
-    const { rows } = await pool.query(sql);
+    // Both values are passed as query parameters — no string interpolation.
+    // ILIKE with a parameterised value is safe; the driver handles escaping.
+    const { rows } = await pool.query(
+      `SELECT id, name, phone, email, channel, tags
+         FROM contacts
+        WHERE workspace_id = $1
+          AND name ILIKE $2
+        ORDER BY updated_at DESC
+        LIMIT 100`,
+      [req.user.workspaceId, `%${term}%`]
+    );
 
     res.json({ data: rows, count: rows.length });
   } catch (err) {

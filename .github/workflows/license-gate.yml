@@ -1,0 +1,123 @@
+name: License Gate
+
+on:
+  pull_request:
+    paths:
+      - "package.json"
+      - "package-lock.json"
+
+permissions:
+  pull-requests: write
+  contents: read
+
+jobs:
+  license-check:
+    name: Check dependency licenses
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci --production
+
+      - name: Install license-checker
+        run: npm install --no-save license-checker-rseidelsohn
+
+      - name: Run license gate
+        id: license_gate
+        # Script exits 1 on prohibited → step fails → job fails → PR blocked
+        run: node scripts/license-check.js
+
+      # Non-blocking: label + comment for review deps 
+
+      - name: Add license-review-needed label
+        if: steps.license_gate.outputs.review_needed == 'true'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            // Ensure label exists
+            try {
+              await github.rest.issues.createLabel({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                name: "license-review-needed",
+                color: "f59e0b",
+                description: "One or more deps need legal sign-off before merge"
+              });
+            } catch (e) {
+              // Label already exists – ignore
+            }
+
+            await github.rest.issues.addLabels({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.payload.pull_request.number,
+              labels: ["license-review-needed"]
+            });
+
+      - name: Comment – review packages
+        if: steps.license_gate.outputs.review_needed == 'true'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const packages = JSON.parse('${{ steps.license_gate.outputs.review_packages }}');
+            const rows = packages.map(p => `| \`${p}\` | Dual-license / unrated / restrictive clause |`).join('\n');
+
+            const body = `## License Review Required
+
+            The following dependencies were added in this PR and require legal sign-off before merge.
+            This label does **not** block the PR automatically, but the PR **must not be merged** until
+            each item below is approved or replaced.
+
+            | Package | Reason |
+            |---------|--------|
+            ${rows}
+
+            **Next steps:**
+            1. Open a ticket in the Legal queue and link it here.
+            2. Once approved, add the package to \`license-allowlist.json\` with the ticket reference.
+            3. Re-run this check — approved packages will pass silently.`;
+
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.payload.pull_request.number,
+              body
+            });
+
+      # ── Blocked: comment explaining exactly what failed 
+
+      - name: Comment – prohibited packages
+        if: failure() && steps.license_gate.outputs.prohibited_packages != '[]'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const packages = JSON.parse('${{ steps.license_gate.outputs.prohibited_packages }}');
+            const rows = packages.map(p => `| \`${p}\` | GPL / AGPL / SSPL / BUSL |`).join('\n');
+
+            const body = `##Prohibited License — PR Blocked
+
+            This PR introduces dependencies with licenses that are **incompatible with convo-hub-api's
+            commercial closed-source SaaS model** and cannot be merged.
+
+            | Package | License class |
+            |---------|---------------|
+            ${rows}
+
+            **Required action:** replace each package with a permissively-licensed alternative before
+            this PR can merge. Do not add an allowlist exception for prohibited licenses.`;
+
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.payload.pull_request.number,
+              body
+            });
