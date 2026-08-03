@@ -3,7 +3,7 @@ name: pr-validation
 # Runs the suite against incoming pull requests, including those from forks, and
 # reports the result back on the PR so reviewers do not have to open the run.
 on:
-  pull_request_target:
+  pull_request:
     types: [opened, synchronize, reopened]
 
 permissions:
@@ -18,11 +18,8 @@ jobs:
       JWT_SECRET: ${{ secrets.CI_JWT_SECRET }}
       NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
     steps:
-      - uses: actions/checkout@v3
-        with:
-          ref: ${{ github.event.pull_request.head.sha }}
-
-      - uses: actions/setup-node@v3
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: npm
